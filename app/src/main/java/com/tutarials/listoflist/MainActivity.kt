@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         if (lists != null) {
             //we then add the lists to the display
             for(list in lists){
-                addList(list, layout)
+                layout.addView(list.buildViewTree(this.applicationContext))
             }
         }
     }
@@ -45,53 +45,5 @@ class MainActivity : AppCompatActivity() {
         //we deserialize the JSON string and return the list of lists of games
         return gson.fromJson(jsonFileString, listOfListOfGameType)
     }
-
-    fun addList(list: GameListItem, layout: LinearLayout){
-        //we create the parent views for our list
-        val tempHorizontalScrollView = HorizontalScrollView(this.applicationContext)
-        val verLinLayout = LinearLayout(this.applicationContext)
-        verLinLayout.orientation = LinearLayout.VERTICAL
-
-        //we create the list name view
-        val listName = TextView(this.applicationContext)
-        listName.text = list.list_title
-        listName.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-        listName.textSize = 24.0f
-
-        //we had the children to the main layout of the list
-        verLinLayout.addView(listName)
-        verLinLayout.addView(tempHorizontalScrollView)
-
-        //we add the list view tree to the App main layout
-        layout.addView(verLinLayout)
-
-        //we add the games to our HorizontalScrollView
-        addGames(list.games, tempHorizontalScrollView)
-    }
-
-    fun addGames(games: List<Game>, horScrollView: HorizontalScrollView){
-        //HorizontalScrollView can only have one direct child, we create the horizontal linear layout as the base to put out games
-        val horLinLayout = LinearLayout(this.applicationContext)
-        horLinLayout.orientation = LinearLayout.HORIZONTAL
-        horScrollView.addView(horLinLayout)
-
-        for(game in games){
-            //each game needs an image and a title, we need a vertical linear layout to hold those
-            val tempLinLayout = LinearLayout(this.applicationContext)
-            tempLinLayout.orientation = LinearLayout.VERTICAL
-            tempLinLayout.setPadding(10,10,10,10) //padding for aesthetic reason so that the images have some space between them
-
-            val gameImage = ImageView(this.applicationContext)
-            Picasso.get().load(game.img).into(gameImage) //with the Picasso framework, we load the image from the internet, framework added in the dependencies in the gradle and internet permission added in the manifest
-            tempLinLayout.addView(gameImage)
-
-            val tempTextView = TextView(this.applicationContext)
-            tempTextView.text = game.title
-            tempTextView.maxWidth = 250
-            tempTextView.setHorizontallyScrolling(false)
-            tempLinLayout.addView(tempTextView)
-
-            horLinLayout.addView(tempLinLayout) //we had the game view tree to our scroll view
-        }
-    }
+    
 }
